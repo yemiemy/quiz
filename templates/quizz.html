@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load humanize %}
+
+{% block auth %}
+<section class="course_details_area section_padding">
+	<div class="container">
+		<div class="row justify-content-center">
+            <div class="col-lg-8 right-contents">
+                {% include 'messages.html' %}
+                <div class="row">
+                    <div class="col-lg-12 course_details_left course_details_area">
+                        <div class="content_wrapper">
+                            <h4 class="title">Quiz</h4>
+                                <div class="content">
+                                    <div class="card" style="box-shadow:0px 10px 30px 0px rgba(193, 34, 10, 0.2);">
+                                        <ul class="course_list" style="padding: 15px;">
+                                        {% if quiz_is_attempted is False %}
+                                            <div class="alert alert-info" role="alert">
+                                                <div id="attempt">
+                                                    <strong>Instructions</strong>:
+                                                    <br>
+                                                    1. You will be provided with a story. <br>
+                                                    2. There are 10 questions from the story. <br>
+                                                    3. Each questions have 4 options. You are to select the correct option in each case. <br>
+                                                    4. You need at least 75% to pass this test. <br>
+                                                    5. You have a total of <b>10 minutes</b> to complete this test. <br>
+                                                    6. Attempt all questions. Your time starts when you click "Start Quiz". <br>
+                                                    Good Luck!
+                                                </div>
+                                                <button type="button" class="btn btn-danger" id="time">
+                                                    Time: <span class="badge badge-light" id="minutes"></span> mins
+                                                    <span class="badge badge-light" id="seconds"></span> s
+                                                         
+                                                </button>
+                                            </div>
+                                            <p>
+                                                <button class="btn_1" onclick="startTime()" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" id='show-more'>
+                                                    Start Quiz
+                                                </button>
+                                            </p>
+                                            <br>
+                                              <div class="collapse" id="collapseExample">
+                                                <div class="card card-body">
+                                                    <form method="POST">
+                                                        {% csrf_token %}
+                                                        {% for object in story %}
+                                                        <li>
+                                                            <p>
+                                                                <strong>{{object.body|safe}}</strong>
+                                                            </p>
+                                                        </li> 
+                                                        {% endfor %}   
+                                                        {% for question in quiz %}
+                                                            <li class="justify-content-between align-items-center d-flex">
+                                                                <p>{{question.question}}
+                                                                    <br>
+                                                                    <input type="radio" value="{{ question.option_1 }}"  name="{{forloop.counter}}"  id="option_1">
+                                                                    <label for="">{{ question.option_1 }}</label>
+                                                                    <input type="radio" value="{{ question.option_2 }}"  name="{{forloop.counter}}"  id="option_2">
+                                                                    <label for="">{{ question.option_2 }}</label>
+                                                                    <input type="radio" value="{{ question.option_3 }}"  name="{{forloop.counter}}"  id="option_3">
+                                                                    <label for="">{{ question.option_3 }}</label>
+                                                                    <input type="radio" value="{{ question.option_4 }}"  name="{{forloop.counter}}"  id="option_4">
+                                                                    <label for="">{{ question.option_4 }}</label>
+                                                                </p>
+                                                                <!-- <a class="btn_2 text-uppercase" href="{{ material.file.url }}" download="">View Details</a> -->
+                                                            </li>
+                                                        {% endfor %}
+                                                        <input type="submit" class="btn_1" id="submit-btn" value="Submit">
+                                                    </form>
+                                                </div>
+                                              </div>
+                                                
+                                            <!--put the else code here-->
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+                                </div>
+                        </div>
+                    </div> 
+                </div> 
+            </div>
+		</div>
+	</div>
+</section>
+
+<script>
+    // hide the start button as soon as the test starts
+    var button = document.getElementById('show-more');
+
+    // hide the instruction as soon as the test starts.
+    let attempt = document.getElementById('attempt');
+
+    // show the time as soon as the test starts
+    let time = document.getElementById('time');
+    
+    time.style.display = 'none';
+
+    attempt.style.display = 'block';
+
+    // listen to the onclick function to activate startTime. 
+    function startTime() {
+        button.style.display = 'none';
+        attempt.style.display = 'none';
+        time.style.display = 'inline';
+        setTimeout(function() {
+            document.getElementById('submit-btn').click();
+            }, 600000);
+        
+        function getTimeRemaining(endtime) {
+            const total = Date.parse(endtime) - Date.parse(new Date());
+            const seconds = Math.floor((total / 1000) % 60);
+            const minutes = Math.floor((total / 1000 / 60) % 60);
+            const hours = Math.floor((total / (1000 * 60 * 60)) % 24);
+            const days = Math.floor(total / (1000 * 60 * 60 * 24));
+            
+            return {
+                total,
+                days,
+                hours,
+                minutes,
+                seconds
+            };
+        }
+
+            function initializeClock(id,id2, endtime) {
+            const minutesSpan = document.getElementById(id);
+            const secondsSpan = document.getElementById(id2);
+
+                function updateClock() {
+                    const t = getTimeRemaining(endtime);
+                    minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
+                    secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
+
+                    if (t.total <= 0) {
+                    clearInterval(timeinterval);
+                    }
+                }
+
+                updateClock();
+                const timeinterval = setInterval(updateClock, 1000);
+            }
+
+            const deadline = new Date(Date.parse(new Date()) + 1 * 1 * 10 * 60 * 1000);
+            initializeClock('minutes', 'seconds', deadline);
+
+
+    }
+
+</script>
+
+{% endblock auth %}
+    

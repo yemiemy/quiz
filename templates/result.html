@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load humanize %}
+
+{% block auth %}
+<section class="course_details_area section_padding">
+	<div class="container">
+		<div class="row justify-content-center">
+            <div class="col-lg-8 right-contents">
+                {% include 'messages.html' %}
+                <div class="row">
+                    <div class="col-lg-12 course_details_left course_details_area">
+                        <div class="content_wrapper">
+                            <h4 class="title">Quiz</h4>
+                                <div class="content">
+                                    <div class="card" style="box-shadow:0px 10px 30px 0px rgba(193, 34, 10, 0.2);">
+                                        <ul class="course_list" style="padding: 15px;">
+                                            {% if result >= 75 %}
+                                            <div class="alert alert-success" role="alert">
+                                                <div id="attempt">
+                                                    <strong>Congratulations!</strong>
+                                                    You passed with a score of {{ result }}%
+                                                   
+                                                </div>
+                                            </div>
+                                            {% else %}
+                                            <div class="alert alert-danger" role="alert">
+                                                <div id="attempt">
+                                                    <strong>Oops!</strong>
+                                                    You did not pass the test. Your score: {{result}}% <br>
+                                                    Unfortunately, you need over 75% to pass this test.
+                                                </div>
+                                            </div>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+                                </div>
+                        </div>
+                    </div> 
+                </div> 
+            </div>
+		</div>
+	</div>
+</section>
+
+{% endblock auth %}
+    

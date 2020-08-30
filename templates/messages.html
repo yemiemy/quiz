@@ -1,0 +1,18 @@
+{% load humanize %}
+{% if messages %}
+    <br>
+{% for message in messages %}
+    <div class="alert {% if message.tags %}  alert-{{message.tags}} {% endif %} alert-dismissible fade show" role="alert">
+        
+        {% if "html_safe" in message.tags  %}
+            {{ message|safe }}
+        {% else %}
+            {{ message }}
+        {% endif %}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+  {% endfor %}
+{% endif %}
+    
